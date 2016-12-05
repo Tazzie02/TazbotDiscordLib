@@ -1,7 +1,7 @@
 # TazbotDiscordLib using [JDA](https://github.com/DV8FromTheWorld/JDA)
 
 ###Basic example using default implementers.
-```
+```java
 String token = "MY_TOKEN";
 TazbotDiscordLibBuilder builder = new TazbotDiscordLibBuilder(token);
 builder.setFilePath(Paths.get(""));
