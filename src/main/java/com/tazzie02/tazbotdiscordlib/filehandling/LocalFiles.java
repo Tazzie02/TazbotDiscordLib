@@ -225,34 +225,32 @@ public class LocalFiles implements CommandSettings, CommandSettingsGuild {
 	
 	private Path getGuildDirectory(Guild guild) throws IOException {
 		final String PRIVATE_DIRECTORY_NAME = "private";
-//		final String SEPARATOR = "-";
+		final String SEPARATOR = "-";
 		
 		String directoryName;
 		if (guild == null) {
 			directoryName = PRIVATE_DIRECTORY_NAME;
 		}
 		else {
-			directoryName = guild.getId();
+			String guildName = guild.getName();
+			String guildId = guild.getId();
 			
-			// This is for using a guild name and id for the directory name and checking if another
-			// directory with a different guild name and same id exists.
-//			String guildName = guild.getName();
-//			String guildId = guild.getId();
-//			
-//			directoryName = String.format("%s%s%s", guildName.replaceAll("[^a-zA-Z0-9.\\-_]", SEPARATOR), SEPARATOR, guildId);
-//			
-//			// Guild names can change, decide on directory from guild id
-//			Path[] paths = Files.list(dataPath).toArray(length -> new Path[length]);
-//			for (Path path : paths) {
-//				String pathName = path.getFileName().toString();
-//				if (pathName.endsWith(SEPARATOR + guildId) && !pathName.equals(directoryName)) {
-//					Path destinationPath = dataPath.resolve(directoryName);
-//					if (!Files.isDirectory(destinationPath)) {
-//						Files.createDirectory(path);
-//					}
-//					FileUtil.moveFilesFromDirectory(path, destinationPath);
-//				}
-//			}
+			directoryName = String.format("%s%s%s", guildName.replaceAll("[^a-zA-Z0-9.\\-_]", SEPARATOR), SEPARATOR, guildId);
+			
+			// Guild names can change, decide on directory from guild id
+			Path[] paths = Files.list(dataPath).toArray(length -> new Path[length]);
+			for (Path path : paths) {
+				String pathName = path.getFileName().toString();
+				if (pathName.endsWith(SEPARATOR + guildId) && !pathName.equals(directoryName)) {
+					Path destinationPath = dataPath.resolve(directoryName);
+					if (!Files.isDirectory(destinationPath)) {
+						Files.move(path, destinationPath);
+					}
+					else {
+						// Hopefully the directory doesn't exist
+					}
+				}
+			}
 		}
 		return dataPath.resolve(directoryName);
 	}
