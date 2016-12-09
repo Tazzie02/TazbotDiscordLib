@@ -134,15 +134,21 @@ public class MessageSenderImpl implements MessageSender {
 	}
 	
 	private void logMessageSent(TextChannel c, Message message) {
-		messageSentLogger.messageSent(c, message);
+		if (messageSentLogger != null) {
+			messageSentLogger.messageSent(c, message);
+		}
 	}
 	
 	private void logMessageFailed(TextChannel c, Message message, SendMessageFailed error) {
-		messageSentLogger.messageSendFailed(c, message, error);
+		if (messageSentLogger != null) {
+			messageSentLogger.messageSendFailed(c, message, error);
+		}
 	}
 	
 	private void logMessageSent(PrivateChannel c, Message message) {
-		messageSentLogger.messageSent(c, message);
+		if (messageSentLogger != null) {
+			messageSentLogger.messageSent(c, message);
+		}
 	}
 	
 //	private void logMessageFailed(PrivateChannel c, Message message, SendMessageFailed error) {
