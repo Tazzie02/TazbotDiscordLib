@@ -29,8 +29,8 @@ public class LocalFiles implements CommandSettings, CommandSettingsGuild {
 	private final String LOG_DIRECTORY_NAME = "logs";
 	private Config config;
 	private Map<Guild, CommandSettingsImpl> settings = new HashMap<>();;
-	private final String CONFIG_FILE_NAME = "config.txt";
-	private final String SETTINGS_FILE_NAME = "command-settings.txt";
+	private final String CONFIG_FILE_NAME = "config.json";
+	private final String SETTINGS_FILE_NAME = "command-settings.json";
 	private final String DEFAULT_PREFIX = "!";
 	
 	private LocalFiles(JDA jda, Path path) {
