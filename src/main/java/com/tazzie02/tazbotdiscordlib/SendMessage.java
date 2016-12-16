@@ -32,9 +32,23 @@ public class SendMessage {
 		
 		if (c instanceof TextChannel) {
 			sendMessage((TextChannel) c, message);
+			return;
 		}
 		else if (c instanceof PrivateChannel) {
 			sendMessage((PrivateChannel) c, message);
+			return;
+		}
+		
+		TextChannel tc = c.getJDA().getTextChannelById(c.getId());
+		if (tc != null) {
+			sendMessage(tc, message);
+			return;
+		}
+		
+		PrivateChannel pc = c.getJDA().getPrivateChannelById(c.getId());
+		if (pc != null) {
+			sendMessage(pc, message);
+			return;
 		}
 		
 		throw new NullPointerException("This shouldn't happen...");
@@ -47,9 +61,23 @@ public class SendMessage {
 		
 		if (c instanceof TextChannel) {
 			sendMessage((TextChannel) c, message);
+			return;
 		}
 		else if (c instanceof PrivateChannel) {
 			sendMessage((PrivateChannel) c, message);
+			return;
+		}
+
+		TextChannel tc = c.getJDA().getTextChannelById(c.getId());
+		if (tc != null) {
+			sendMessage(tc, message);
+			return;
+		}
+		
+		PrivateChannel pc = c.getJDA().getPrivateChannelById(c.getId());
+		if (pc != null) {
+			sendMessage(pc, message);
+			return;
 		}
 		
 		throw new NullPointerException("This shouldn't happen...");
