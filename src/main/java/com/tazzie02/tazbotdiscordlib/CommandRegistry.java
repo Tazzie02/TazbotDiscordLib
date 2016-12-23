@@ -7,10 +7,11 @@ import java.util.Optional;
 
 import com.tazzie02.tazbotdiscordlib.CommandInformation.CommandAccess;
 
-import net.dv8tion.jda.entities.Guild;
-import net.dv8tion.jda.entities.User;
-import net.dv8tion.jda.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.hooks.ListenerAdapter;
+import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 public class CommandRegistry extends ListenerAdapter {
 	
@@ -95,7 +96,7 @@ public class CommandRegistry extends ListenerAdapter {
 	@Override
 	public void onMessageReceived(MessageReceivedEvent e) {
 		// Ignore messages from self
-		if (e.getAuthor().getId().equals(e.getJDA().getSelfInfo().getId())) {
+		if (e.getAuthor().getId().equals(e.getJDA().getSelfUser().getId())) {
 			return;
 		}
 		
@@ -105,14 +106,14 @@ public class CommandRegistry extends ListenerAdapter {
 		
 		if (ALLOW_MENTION_PREFIX) {
 			// If first argument is mention
-			message = removeStartMention(message, e.getJDA().getSelfInfo());
+			message = removeStartMention(message, e.getJDA().getSelfUser());
 			// Message the contains only bot mention should be handled elsewhere
 			if (message.length() == 0) {
 				return;
 			}
 		}
 		
-		Guild guild = e.isPrivate() == false ? e.getGuild() : null;
+		Guild guild = !e.isFromType(ChannelType.PRIVATE) ? e.getGuild() : null;
 		Command command = null;
 		
 		StringBuilder messageBuilder = new StringBuilder(message);
@@ -194,45 +195,6 @@ public class CommandRegistry extends ListenerAdapter {
 		}
 		return false;
 	}
-	
-	// TODO Do something with this
-//	// Yeah... this mess, heard you like for loops so I put for loops inside your for loops
-//	public List<AliasConflict> aliasConflict(Guild guild) {
-//		List<AliasConflict> conflicts = new ArrayList<>();
-//		if (guildSettings != null) {
-//			for (int i = 0; i < commands.size(); i++) {
-//				Command c1 = commands.get(i);
-//				String c1Prefix = getPrefix(guild, c1);
-//				
-//				for (int j = i+1; j < commands.size(); j++) {
-//					Command c2 = commands.get(j);
-//					String c2Prefix = getPrefix(guild, c2);
-//					
-//					for (String c1Alias : c1.getAliases()) {
-//						if (!caseSensitive) {
-//							c1Alias = c1Alias.toLowerCase();
-//						}
-//						c1Alias = c1Prefix + c1Alias;
-//						for (String c2Alias: c2.getAliases()) {
-//							if (!caseSensitive) {
-//								c2Alias = c2Alias.toLowerCase();
-//							}
-//							c2Alias = c2Prefix + c1Alias;
-//							
-//							if (c1Alias.startsWith(c2Alias)) {
-//								conflicts.add(new AliasConflict(c1, c1Alias, c2, c2Alias));
-//							}
-//							if (c2Alias.startsWith(c1Alias)) {
-//								conflicts.add(new AliasConflict(c2, c2Alias, c1, c1Alias));
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
-//		
-//		return conflicts;
-//	}
 	
 	protected boolean startsWithMention(String text, User user) {
 		if (text.startsWith("<@" + user.getId() + ">")) {
@@ -435,36 +397,5 @@ public class CommandRegistry extends ListenerAdapter {
 	public CommandInformation findCommandInformation(String alias) {
 		return findCommand(alias);
 	}
-
-	// TODO Do something with this
-//	private class AliasConflict {
-//		private Command source;
-//		private String sourceAlias;
-//		private Command conflict;
-//		private String conflictAlias;
-//		
-//		public AliasConflict(Command source, String sourceAlias, Command conflict, String conflictAlias) {
-//			this.source = source;
-//			this.sourceAlias = sourceAlias;
-//			this.conflict = conflict;
-//			this.conflictAlias = conflictAlias;
-//		}
-//		
-//		public Command getSource() {
-//			return source;
-//		}
-//		
-//		public String getSourceAlias() {
-//			return sourceAlias;
-//		}
-//		
-//		public Command getConflict() {
-//			return conflict;
-//		}
-//		
-//		public String getConflictAlias() {
-//			return conflictAlias;
-//		}
-//	}
 	
 }

@@ -8,7 +8,8 @@ import javax.security.auth.login.LoginException;
 
 import com.tazzie02.tazbotdiscordlib.impl.TazbotDiscordLibImpl;
 
-import net.dv8tion.jda.hooks.ListenerAdapter;
+import net.dv8tion.jda.core.exceptions.RateLimitedException;
+import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 public class TazbotDiscordLibBuilder {
 	
@@ -22,7 +23,7 @@ public class TazbotDiscordLibBuilder {
 		this.botToken = botToken;
 	}
 	
-	public TazbotDiscordLib build() throws LoginException, IllegalArgumentException, InterruptedException {
+	public TazbotDiscordLib build() throws LoginException, IllegalArgumentException, InterruptedException, RateLimitedException {
 		TazbotDiscordLibImpl tdl = new TazbotDiscordLibImpl(botToken, listeners, audioEnabled);
 		tdl.setMessageSender(messageSender);
 		tdl.setFilePath(path);

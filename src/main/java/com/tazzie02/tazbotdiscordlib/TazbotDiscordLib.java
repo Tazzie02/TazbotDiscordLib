@@ -2,8 +2,8 @@ package com.tazzie02.tazbotdiscordlib;
 
 import java.nio.file.Path;
 
-import net.dv8tion.jda.JDA;
-import net.dv8tion.jda.hooks.ListenerAdapter;
+import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 public interface TazbotDiscordLib {
 

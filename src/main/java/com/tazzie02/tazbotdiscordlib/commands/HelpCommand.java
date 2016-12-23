@@ -3,16 +3,18 @@ package com.tazzie02.tazbotdiscordlib.commands;
 import java.util.Arrays;
 import java.util.List;
 
-import net.dv8tion.jda.MessageBuilder;
-import net.dv8tion.jda.entities.Guild;
-import net.dv8tion.jda.entities.User;
-import net.dv8tion.jda.events.message.MessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 
 import com.tazzie02.tazbotdiscordlib.Command;
 import com.tazzie02.tazbotdiscordlib.CommandInformation;
 import com.tazzie02.tazbotdiscordlib.CommandRegistry;
 import com.tazzie02.tazbotdiscordlib.SendMessage;
+
+import net.dv8tion.jda.core.MessageBuilder;
+import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 public class HelpCommand implements Command {
 	
@@ -24,13 +26,13 @@ public class HelpCommand implements Command {
 	
 	@Override
 	public void onCommand(MessageReceivedEvent e, String[] args) {
-		if(!e.isPrivate()) {
+		if(!e.isFromType(ChannelType.PRIVATE)) {
 			SendMessage.sendMessage(e, new MessageBuilder()
-					.appendMention(e.getAuthor())
-					.appendString(": Sending help information as a private message.")
+					.append(e.getAuthor())
+					.append(": Sending help information as a private message.")
 					.build());
 		}
-		System.out.println("help length: " + args.length);
+		
 		if (args.length == 0) {
 			sendHelp(e);
 		}

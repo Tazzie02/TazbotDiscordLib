@@ -16,8 +16,8 @@ import com.tazzie02.tazbotdiscordlib.CommandSettings;
 import com.tazzie02.tazbotdiscordlib.CommandSettingsGuild;
 import com.tazzie02.tazbotdiscordlib.util.FileUtil;
 
-import net.dv8tion.jda.JDA;
-import net.dv8tion.jda.entities.Guild;
+import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.entities.Guild;
 
 public class LocalFiles implements CommandSettings, CommandSettingsGuild {
 	
