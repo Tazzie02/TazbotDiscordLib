@@ -2,7 +2,7 @@ package com.tazzie02.tazbotdiscordlib;
 
 import java.util.Set;
 
-import net.dv8tion.jda.entities.Guild;
+import net.dv8tion.jda.core.entities.Guild;
 
 public interface CommandSettingsGuild {
 	

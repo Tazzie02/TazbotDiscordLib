@@ -10,11 +10,12 @@ import com.tazzie02.tazbotdiscordlib.MessageSentLogger;
 import com.tazzie02.tazbotdiscordlib.filehandling.FileLogger;
 import com.tazzie02.tazbotdiscordlib.impl.MessageSenderImpl.SendMessageFailed;
 
-import net.dv8tion.jda.entities.Message;
-import net.dv8tion.jda.entities.PrivateChannel;
-import net.dv8tion.jda.entities.TextChannel;
-import net.dv8tion.jda.entities.User;
-import net.dv8tion.jda.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.PrivateChannel;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogger {
 	
@@ -68,7 +69,7 @@ public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogg
 	}
 	
 	private void logMessage(MessageReceivedEvent e, boolean log, boolean printToConsole) {
-		if (e.isPrivate()) {
+		if (e.isFromType(ChannelType.PRIVATE)) {
 			logMessage(e.getPrivateChannel(), e.getMessage(), log, printToConsole);
 		}
 		else {
@@ -79,12 +80,12 @@ public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogg
 	private void logMessage(TextChannel c, Message message, boolean log, boolean printToConsole) {
 		User author = message.getAuthor();
 		if (author == null) {
-			author = c.getJDA().getSelfInfo();
+			author = c.getJDA().getSelfUser();
 		}
 		
 		if (log) {
 			// HH:mm:ss [#CHANNEL] Username: Message
-			String s = String.format("[#%s] %s: %s", c.getName(), author.getUsername(), getSafeMessageContent(message));
+			String s = String.format("[#%s] %s: %s", c.getName(), author.getName(), getSafeMessageContent(message));
 			try {
 				FileLogger.log(s, c.getGuild(), c.getJDA());
 			} catch (IOException e) {
@@ -95,7 +96,7 @@ public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogg
 		if (printToConsole) {
 			// yyyy-MM-dd HH:mm:ss.SSS [GUILD][#CHANNEL] Username: Message
 			String s = String.format("[%s][#%s] %s: %s", c.getGuild().getName(), c.getName(), 
-														author.getUsername(), getSafeMessageContent(message));
+														author.getName(), getSafeMessageContent(message));
 			sendConsoleOutput(s);
 		}
 	}
@@ -103,12 +104,12 @@ public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogg
 	private void logMessage(TextChannel c, Message message, SendMessageFailed error, boolean log, boolean printToConsole) {
 		User author = message.getAuthor();
 		if (author == null) {
-			author = c.getJDA().getSelfInfo();
+			author = c.getJDA().getSelfUser();
 		}
 		
 		if (log) {
 			// HH:mm:ss FAILED_REASON [#CHANNEL] Username: Message
-			String s = String.format("%s [#%s] %s: %s", error.toString(), c.getName(), author.getUsername(), getSafeMessageContent(message));
+			String s = String.format("%s [#%s] %s: %s", error.toString(), c.getName(), author.getName(), getSafeMessageContent(message));
 			try {
 				FileLogger.log(s, c.getGuild(), c.getJDA());
 			} catch (IOException e) {
@@ -119,7 +120,7 @@ public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogg
 		if (printToConsole) {
 			// yyyy-MM-dd HH:mm:ss.SSS FAILED_REASON [GUILD][#CHANNEL] Username: Message
 			String s = String.format("%s [%s][#%s] %s: %s", error.toString(), c.getGuild().getName(), c.getName(), 
-															author.getUsername(), getSafeMessageContent(message));
+															author.getName(), getSafeMessageContent(message));
 			sendConsoleOutput(s);
 		}
 	}
@@ -127,12 +128,12 @@ public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogg
 	private void logMessage(PrivateChannel c, Message message, boolean log, boolean printToConsole) {
 		User author = message.getAuthor();
 		if (author == null) {
-			author = c.getJDA().getSelfInfo();
+			author = c.getJDA().getSelfUser();
 		}
 		
 		if (log) {
 			// HH:mm:ss Username: Message
-			String s = String.format("%s: %s", author.getUsername(), getSafeMessageContent(message));
+			String s = String.format("%s: %s", author.getName(), getSafeMessageContent(message));
 			try {
 				FileLogger.log(s, null, c.getJDA());
 			} catch (IOException e) {
@@ -142,7 +143,7 @@ public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogg
 		}
 		if (printToConsole) {
 			// yyyy-MM-dd HH:mm:ss.SSS [PRIVATE] Username: Message
-			String s = String.format("[PRIVATE] %s: %s", author.getUsername(), getSafeMessageContent(message));
+			String s = String.format("[PRIVATE] %s: %s", author.getName(), getSafeMessageContent(message));
 			sendConsoleOutput(s);
 		}
 	}

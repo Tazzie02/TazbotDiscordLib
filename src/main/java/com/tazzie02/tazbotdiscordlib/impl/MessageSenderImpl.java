@@ -6,13 +6,12 @@ import java.util.List;
 import com.tazzie02.tazbotdiscordlib.MessageSender;
 import com.tazzie02.tazbotdiscordlib.MessageSentLogger;
 
-import net.dv8tion.jda.MessageBuilder;
-import net.dv8tion.jda.entities.Guild.VerificationLevel;
-import net.dv8tion.jda.entities.Message;
-import net.dv8tion.jda.entities.PrivateChannel;
-import net.dv8tion.jda.entities.TextChannel;
-import net.dv8tion.jda.exceptions.VerificationLevelException;
-import net.dv8tion.jda.utils.PermissionUtil;
+import net.dv8tion.jda.client.exceptions.VerificationLevelException;
+import net.dv8tion.jda.core.MessageBuilder;
+import net.dv8tion.jda.core.entities.Guild.VerificationLevel;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.PrivateChannel;
+import net.dv8tion.jda.core.entities.TextChannel;
 
 // NOTE THAT THERE IS A BUG WITH JDA THAT MEANS THESE CREATED MESSAGE OBJECTS HAVE NULL AUTHORS
 public class MessageSenderImpl implements MessageSender {
@@ -27,18 +26,19 @@ public class MessageSenderImpl implements MessageSender {
 			throw new NullPointerException();
 		}
 		
-		if (!PermissionUtil.canTalk(c)) {
+		if (c.canTalk()) {
 			logMessageFailed(c, message, SendMessageFailed.NO_WRITE_PERMISSION);
 			return;
 		}
-		if (c.getGuild().getVerificationLevel().equals(VerificationLevel.LOW) && !c.getJDA().getSelfInfo().isVerified()) {
+		if (c.getGuild().getVerificationLevel().equals(VerificationLevel.LOW) && !c.getJDA().getSelfUser().isVerified()) {
 			logMessageFailed(c, message, SendMessageFailed.NO_EMAIL_VERIFICATION);
 			return;
 		}
 		
 		try {
-			c.sendMessageAsync(message, null);
-			logMessageSent(c, message);
+			c.sendMessage(message).queue(m -> {
+				logMessageSent(c, message);
+			});
 		}
 		catch (VerificationLevelException e) {
 			logMessageFailed(c, message, SendMessageFailed.NO_TIME_VERIFICATION);
@@ -69,8 +69,9 @@ public class MessageSenderImpl implements MessageSender {
 			throw new NullPointerException();
 		}
 		
-		c.sendMessageAsync(message, null);
-		logMessageSent(c, message);
+		c.sendMessage(message).queue(m -> {
+			logMessageSent(c, message);
+		});
 	}
 
 	@Override
@@ -117,16 +118,16 @@ public class MessageSenderImpl implements MessageSender {
 
 				// Split if index found
 				if (index != -1) {
-					messages.add(new MessageBuilder().appendString(split.substring(0, index)).build());
+					messages.add(new MessageBuilder().append(split.substring(0, index)).build());
 					message = split.substring(index + 1) + message;
 				}
 				// Split on MAX_MESSAGE_SIZE if index found
 				else {
-					messages.add(new MessageBuilder().appendString(split).build());
+					messages.add(new MessageBuilder().append(split).build());
 				}
 			}
 			else {
-				messages.add(new MessageBuilder().appendString(message).build());
+				messages.add(new MessageBuilder().append(message).build());
 				message = "";
 			}
 		}

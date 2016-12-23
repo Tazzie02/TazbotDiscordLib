@@ -2,9 +2,9 @@ package com.tazzie02.tazbotdiscordlib;
 
 import com.tazzie02.tazbotdiscordlib.impl.MessageSenderImpl.SendMessageFailed;
 
-import net.dv8tion.jda.entities.Message;
-import net.dv8tion.jda.entities.PrivateChannel;
-import net.dv8tion.jda.entities.TextChannel;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.PrivateChannel;
+import net.dv8tion.jda.core.entities.TextChannel;
 
 public interface MessageSentLogger {
 	
