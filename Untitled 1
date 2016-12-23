@@ -1,0 +1,29 @@
+/
+	run.sh
+	config.json
+	data/
+		private/
+			command-settings.json
+			logs/
+				20161113.log
+		1234567890/
+			command-settings.json
+			logs/
+				20161113.log
+		0987654321/
+			command-settings.json
+			logs/
+				20161113.log
+		
+config.json
+	token
+	ownerIDs
+	administratorIDs
+	prefix
+	overrides[alias, prefix]
+		
+guild	none required
+command-settings.json
+	administratorIDs
+	prefix
+	overrides[alias, prefix]
