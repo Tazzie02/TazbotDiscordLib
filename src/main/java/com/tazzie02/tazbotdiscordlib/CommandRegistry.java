@@ -59,24 +59,44 @@ public class CommandRegistry extends ListenerAdapter {
 	 * will overwrite the default settings.
 	 * 
 	 * @param guildSettings
+	 *        The CommandSettingsGuild to set.
 	 */
 	public void setGuildCommandSettings(CommandSettingsGuild guildSettings) {
 		this.guildSettings = guildSettings;
 	}
 	
 	/**
-	 * Set 
+	 * Set a logger for messages received.
 	 * 
 	 * @param messageReceivedLogger
+	 *        The MessageReceivedLogger to set.
 	 */
 	public void setMessageReceivedLogger(MessageReceivedLogger messageReceivedLogger) {
 		this.messageReceivedLogger = messageReceivedLogger;
 	}
 	
+	/**
+	 * Set whether command aliases are case sensitive or case insensitive.
+	 * Default false (insensitive).
+	 * 
+	 * @param caseSensitive
+	 *        Set true for case sensitive.
+	 */
 	public void setCaseSensitiveCommands(boolean caseSensitive) {
 		this.caseSensitive = caseSensitive;
 	}
 	
+	/**
+	 * Register a Command to the CommandRegistry.
+	 * 
+	 * @param  command
+	 *         The Command to register.
+	 * @return This CommandRegistry instance. Used for chaining.
+	 * @throws UnsupportedOperationException
+	 *         {@link CommandInformation} has one or more invalid fields.
+	 *         The command will not be registered. Check the error message
+	 *         for more information.
+	 */
 	public CommandRegistry registerCommand(Command command) {
 		if (command == null) {
 			 throw new NullPointerException("Command must not be null.");
@@ -98,6 +118,14 @@ public class CommandRegistry extends ListenerAdapter {
 		return this;
 	}
 	
+	/**
+	 * Unregister a Command from the CommandRegistry.
+	 * 
+	 * @param  command
+	 *         The Command to unregister.
+	 * @return True if the Command was unregistered. May return false if the
+	 *         Command was not registered.
+	 */
 	public boolean unregisterCommand(Command command) {
 		if (command == null) {
 			throw new NullPointerException();
@@ -106,6 +134,15 @@ public class CommandRegistry extends ListenerAdapter {
 		return commands.remove(command);
 	}
 	
+	/**
+	 * Unregister a Command by one of it's aliases from the CommandRegistry.
+	 * 
+	 * @param  alias
+	 *         An alias of the Command to unregister.
+	 * @return True if the Command was unregistered. May return false if the
+	 *         Command was not registered, or the alias did not match one of
+	 *         the aliases of a registered Command.
+	 */
 	public boolean unregisterCommand(String alias) {
 		if (alias == null) {
 			throw new NullPointerException();
@@ -118,6 +155,11 @@ public class CommandRegistry extends ListenerAdapter {
 		return false;
 	}
 	
+	/**
+	 * Get an unmodifiable list of the registered Commands.
+	 * 
+	 * @return An unmodifiable list of the registered Commands.
+	 */
 	public List<Command> getCommands() {
 		return Collections.unmodifiableList(commands);
 	}
@@ -163,6 +205,17 @@ public class CommandRegistry extends ListenerAdapter {
 		command.onCommand(e, splitIntoArgs(messageBuilder.toString()));
 	}
 	
+	/**
+	 * Split a String into an array of arguments using a space as a delimiter.
+	 * The String is first trimmed removing leading and trailing whitespace.
+	 * If the String is empty, or only contains whitespace, an empty array is
+	 * returned.
+	 * 
+	 * @param  s
+	 *         The String to split into an array of arguments.
+	 * @return A String array containing the arguments of the String s. Possibly
+	 *         empty if s is empty or only contains whitespace.
+	 */
 	protected String[] splitIntoArgs(String s) {
 		String[] args = s.trim().split(" ");
 		if (args[0].equals("")) {
@@ -171,8 +224,17 @@ public class CommandRegistry extends ListenerAdapter {
 		return args;
 	}
 	
+	/**
+	 * Get the prefix for the Guild. The first not-null prefix is used: 
+	 * GuildSettings > DefaultSettings > EMPTY_PREFIX
+	 * 
+	 * @param  guild
+	 *         The Guild to get a prefix for.
+	 * @return The prefix for the Guild.
+	 */
 	protected String getPrefix(Guild guild) {
 		String prefix = null;
+		
 		if (guildSettings != null) {
 			prefix = guildSettings.getPrefix(guild);
 		}
@@ -184,26 +246,32 @@ public class CommandRegistry extends ListenerAdapter {
 		if (prefix == null) {
 			prefix = EMPTY_PREFIX;
 		}
+		
 		return prefix;
 	}
 	
+	/**
+	 * Get the prefix for the Command in Guild. The first non-null prefix is used: 
+	 * OverrideCommand > GuildSettings > DefaultSettings > EMPTY_PREFIX
+	 * 
+	 * @param  guild
+	 *         The Guild to get a prefix for Command.
+	 * @param  command
+	 *         The Command to get a prefix for.
+	 * @return The prefix for the Command in Guild.
+	 */
 	protected String getPrefix(Guild guild, Command command) {
 		String prefix = null;
-		if (guildSettings != null) {
-			if (guildSettings.getCommandOverrides(guild) != null) {
-				prefix = guildSettings.getCommandOverrides(guild).getOverridePrefix(command);
-			}
+		
+		try {
+			prefix = guildSettings.getCommandOverrides(guild).getOverridePrefix(command);
 		}
-		if (prefix == null) {
-			if (defaultSettings != null) {
-				if (defaultSettings.getCommandOverrides() != null) {
-					prefix = defaultSettings.getCommandOverrides().getOverridePrefix(command);
-				}
-			}
-		}
+		catch (NullPointerException ignored) {}
+		
 		if (prefix == null) {
 			prefix = getPrefix(guild);
 		}
+		
 		return prefix;
 	}
 	
