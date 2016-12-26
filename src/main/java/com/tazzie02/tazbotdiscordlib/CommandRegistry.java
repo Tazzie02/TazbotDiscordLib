@@ -13,6 +13,11 @@ import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
+/**
+ * Reads all text messages sent through Discord and triggers a {@link Command Command}'s
+ * {@link Command#onCommand(MessageReceivedEvent, String[]) onCommand()} method if the
+ * message starts with the correct prefix followed by an {@link Command#getAliases() alias}.
+ */
 public class CommandRegistry extends ListenerAdapter {
 	
 	private final boolean ALLOW_MENTION_PREFIX = true;
@@ -28,18 +33,42 @@ public class CommandRegistry extends ListenerAdapter {
 		commands = new ArrayList<>();
 	}
 	
+	/**
+	 * Set the Owners. The Owners will have full access to Commands.
+	 * 
+	 * @param owners
+	 *        Owners to set.
+	 */
 	public void setOwners(Owners owners) {
 		this.owners = owners;
 	}
 	
+	/**
+	 * Set the default CommandSettings. These are the base settings which exist for
+	 * all guilds, but are overwritten if guild specific settings exist.
+	 * 
+	 * @param defaultSettings
+	 *        The default CommandSettings to set.
+	 */
 	public void setDefaultCommandSettings(CommandSettings defaultSettings) {
 		this.defaultSettings = defaultSettings;
 	}
 	
+	/**
+	 * Set the guild specific CommandSettings. If settings exist for a guild, they
+	 * will overwrite the default settings.
+	 * 
+	 * @param guildSettings
+	 */
 	public void setGuildCommandSettings(CommandSettingsGuild guildSettings) {
 		this.guildSettings = guildSettings;
 	}
 	
+	/**
+	 * Set 
+	 * 
+	 * @param messageReceivedLogger
+	 */
 	public void setMessageReceivedLogger(MessageReceivedLogger messageReceivedLogger) {
 		this.messageReceivedLogger = messageReceivedLogger;
 	}
@@ -360,7 +389,6 @@ public class CommandRegistry extends ListenerAdapter {
 		}
 	}
 	
-	// TODO Shouldn't be in CommandRegistry
 	public boolean isModerator(User user, Guild guild) {
 		String id = user.getId();
 		
@@ -382,7 +410,6 @@ public class CommandRegistry extends ListenerAdapter {
 		return false;
 	}
 	
-	// TODO Shouldn't be in CommandRegistry
 	public boolean isOwner(User user, Guild guild) {
 		if (owners != null) {
 			if (owners.getOwners() != null) {
