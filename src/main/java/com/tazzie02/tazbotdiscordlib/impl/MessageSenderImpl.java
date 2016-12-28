@@ -26,7 +26,7 @@ public class MessageSenderImpl implements MessageSender {
 			throw new NullPointerException();
 		}
 		
-		if (c.canTalk()) {
+		if (!c.canTalk()) {
 			logMessageFailed(c, message, SendMessageFailed.NO_WRITE_PERMISSION);
 			return;
 		}
