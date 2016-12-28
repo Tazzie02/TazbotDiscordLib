@@ -10,21 +10,23 @@ import com.tazzie02.tazbotdiscordlib.SendMessage;
 import com.tazzie02.tazbotdiscordlib.TazbotDiscordLib;
 import com.tazzie02.tazbotdiscordlib.filehandling.LocalFiles;
 
-import net.dv8tion.jda.JDA;
-import net.dv8tion.jda.JDABuilder;
-import net.dv8tion.jda.hooks.ListenerAdapter;
+import net.dv8tion.jda.core.AccountType;
+import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.JDABuilder;
+import net.dv8tion.jda.core.exceptions.RateLimitedException;
+import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 public class TazbotDiscordLibImpl implements TazbotDiscordLib {
 	
 	private JDA jda;
 	
-	public TazbotDiscordLibImpl(String botToken, Set<ListenerAdapter> listeners, boolean audioEnabled) throws LoginException, IllegalArgumentException, InterruptedException {
+	public TazbotDiscordLibImpl(String botToken, Set<ListenerAdapter> listeners, boolean audioEnabled) throws LoginException, IllegalArgumentException, InterruptedException, RateLimitedException {
 		jda = buildJDA(botToken, listeners, audioEnabled);
 	}
 	
-	private JDA buildJDA(String botToken, Set<ListenerAdapter> listeners, boolean audioEnabled) throws LoginException, IllegalArgumentException, InterruptedException {
-		JDABuilder builder = new JDABuilder();
-		builder.setBotToken(botToken);
+	private JDA buildJDA(String botToken, Set<ListenerAdapter> listeners, boolean audioEnabled) throws LoginException, IllegalArgumentException, InterruptedException, RateLimitedException {
+		JDABuilder builder = new JDABuilder(AccountType.BOT);
+		builder.setToken(botToken);
 		builder.setBulkDeleteSplittingEnabled(false);
 		builder.setAudioEnabled(audioEnabled);
 		listeners.forEach(builder::addListener);

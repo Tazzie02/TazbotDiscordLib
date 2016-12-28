@@ -16,8 +16,8 @@ import com.tazzie02.tazbotdiscordlib.CommandSettings;
 import com.tazzie02.tazbotdiscordlib.CommandSettingsGuild;
 import com.tazzie02.tazbotdiscordlib.util.FileUtil;
 
-import net.dv8tion.jda.JDA;
-import net.dv8tion.jda.entities.Guild;
+import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.entities.Guild;
 
 public class LocalFiles implements CommandSettings, CommandSettingsGuild {
 	
@@ -29,8 +29,8 @@ public class LocalFiles implements CommandSettings, CommandSettingsGuild {
 	private final String LOG_DIRECTORY_NAME = "logs";
 	private Config config;
 	private Map<Guild, CommandSettingsImpl> settings = new HashMap<>();;
-	private final String CONFIG_FILE_NAME = "config.txt";
-	private final String SETTINGS_FILE_NAME = "command-settings.txt";
+	private final String CONFIG_FILE_NAME = "config.json";
+	private final String SETTINGS_FILE_NAME = "command-settings.json";
 	private final String DEFAULT_PREFIX = "!";
 	
 	private LocalFiles(JDA jda, Path path) {

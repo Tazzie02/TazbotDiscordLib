@@ -3,13 +3,14 @@ package com.tazzie02.tazbotdiscordlib;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.dv8tion.jda.JDA;
-import net.dv8tion.jda.entities.Message;
-import net.dv8tion.jda.entities.MessageChannel;
-import net.dv8tion.jda.entities.PrivateChannel;
-import net.dv8tion.jda.entities.TextChannel;
-import net.dv8tion.jda.entities.User;
-import net.dv8tion.jda.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.core.entities.PrivateChannel;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 public class SendMessage {
 	
@@ -32,9 +33,23 @@ public class SendMessage {
 		
 		if (c instanceof TextChannel) {
 			sendMessage((TextChannel) c, message);
+			return;
 		}
 		else if (c instanceof PrivateChannel) {
 			sendMessage((PrivateChannel) c, message);
+			return;
+		}
+		
+		TextChannel tc = c.getJDA().getTextChannelById(c.getId());
+		if (tc != null) {
+			sendMessage(tc, message);
+			return;
+		}
+		
+		PrivateChannel pc = c.getJDA().getPrivateChannelById(c.getId());
+		if (pc != null) {
+			sendMessage(pc, message);
+			return;
 		}
 		
 		throw new NullPointerException("This shouldn't happen...");
@@ -47,9 +62,23 @@ public class SendMessage {
 		
 		if (c instanceof TextChannel) {
 			sendMessage((TextChannel) c, message);
+			return;
 		}
 		else if (c instanceof PrivateChannel) {
 			sendMessage((PrivateChannel) c, message);
+			return;
+		}
+
+		TextChannel tc = c.getJDA().getTextChannelById(c.getId());
+		if (tc != null) {
+			sendMessage(tc, message);
+			return;
+		}
+		
+		PrivateChannel pc = c.getJDA().getPrivateChannelById(c.getId());
+		if (pc != null) {
+			sendMessage(pc, message);
+			return;
 		}
 		
 		throw new NullPointerException("This shouldn't happen...");
@@ -76,7 +105,7 @@ public class SendMessage {
 			throw new NullPointerException();
 		}
 		
-		if (e.isPrivate()) {
+		if (e.isFromType(ChannelType.PRIVATE)) {
 			sendMessage(e.getPrivateChannel(), message);
 		}
 		else {
@@ -89,7 +118,7 @@ public class SendMessage {
 			throw new NullPointerException();
 		}
 		
-		if (e.isPrivate()) {
+		if (e.isFromType(ChannelType.PRIVATE)) {
 			sendMessage(e.getPrivateChannel(), message);
 		}
 		else {
@@ -135,7 +164,7 @@ public class SendMessage {
 		}
 		
 		PrivateChannel c;
-		if (e.isPrivate()) {
+		if (e.isFromType(ChannelType.PRIVATE)) {
 			c = e.getPrivateChannel();
 		}
 		else {
@@ -151,7 +180,7 @@ public class SendMessage {
 		}
 		
 		PrivateChannel c;
-		if (e.isPrivate()) {
+		if (e.isFromType(ChannelType.PRIVATE)) {
 			c = e.getPrivateChannel();
 		}
 		else {

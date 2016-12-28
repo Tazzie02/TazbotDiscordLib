@@ -8,8 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-import net.dv8tion.jda.JDA;
-import net.dv8tion.jda.entities.Guild;
+import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.entities.Guild;
 
 public class FileLogger {
 	
