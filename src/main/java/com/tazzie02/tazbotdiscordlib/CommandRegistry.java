@@ -252,7 +252,7 @@ public class CommandRegistry extends ListenerAdapter {
 	
 	/**
 	 * Get the prefix for the Command in Guild. The first non-null prefix is used: 
-	 * OverrideCommand > GuildSettings > DefaultSettings > EMPTY_PREFIX
+	 * GuildOverrideCommand > GuildSettings > DefaultOverrideCommand > DefaultSettings > EMPTY_PREFIX
 	 * 
 	 * @param  guild
 	 *         The Guild to get a prefix for Command.
@@ -263,18 +263,45 @@ public class CommandRegistry extends ListenerAdapter {
 	protected String getPrefix(Guild guild, Command command) {
 		String prefix = null;
 		
-		try {
-			prefix = guildSettings.getCommandOverrides(guild).getOverridePrefix(command);
+		if (guildSettings != null) {
+			if (guildSettings.getCommandOverrides(guild) != null) {
+				if (guildSettings.getCommandOverrides(guild).getOverridePrefix(command) != null) {
+					prefix = guildSettings.getCommandOverrides(guild).getOverridePrefix(command);
+				}
+			}
+			if (prefix == null) {
+				prefix = guildSettings.getPrefix(guild); 
+			}
 		}
-		catch (NullPointerException ignored) {}
+		
+		if (defaultSettings != null) {
+			if (defaultSettings.getCommandOverrides() != null) {
+				if (defaultSettings.getCommandOverrides().getOverridePrefix(command) != null) {
+					prefix = defaultSettings.getCommandOverrides().getOverridePrefix(command);
+				}
+			}
+			if (prefix == null) {
+				prefix = defaultSettings.getPrefix();
+			}
+		}
 		
 		if (prefix == null) {
-			prefix = getPrefix(guild);
+			prefix = EMPTY_PREFIX;
 		}
 		
 		return prefix;
 	}
 	
+	/**
+	 * Check if an override exists for a Command. This is not necessarily a
+	 * Guild override, it could be a default override.
+	 * 
+	 * @param  guild
+	 *         The Guild to check for Command.
+	 * @param  command
+	 *         The Command to check for override.
+	 * @return True if an override exists for Command.
+	 */
 	protected boolean overrideExists(Guild guild, Command command) {
 		if (guildSettings != null) {
 			if (guildSettings.getCommandOverrides(guild) != null) {
@@ -293,6 +320,15 @@ public class CommandRegistry extends ListenerAdapter {
 		return false;
 	}
 	
+	/**
+	 * Check whether a String starts with a mention. A mention in String form
+	 * looks like <@id> where id is replaced with an 18 digit snowflake.
+	 * @param  text
+	 *         The String to find the mention.
+	 * @param  user
+	 *         The User to find a mention for.
+	 * @return True if the String starts with the User mention.
+	 */
 	protected boolean startsWithMention(String text, User user) {
 		if (text.startsWith("<@" + user.getId() + ">")) {
 			return true;
@@ -300,12 +336,19 @@ public class CommandRegistry extends ListenerAdapter {
 		return false;
 	}
 	
+	/**
+	 * Return a String with the User's mention removed from the start of String.
+	 * 
+	 * @param  text
+	 *         The String to remove the mention from.
+	 * @param  user
+	 *         The User who's mention should be removed.
+	 * @return A String without User's mention at the start. Possibly the same
+	 *         String from the text parameter if it did not start with User's mention.
+	 */
 	protected String removeStartMention(String text, User user) {
 		if (startsWithMention(text, user)) {
 			int length = 3 + user.getId().length(); // <@ + id + >
-//			if (text.length() == length) {
-//				return "";
-//			}
 			text = text.substring(length);
 			if (text.startsWith(" ")) {
 				text = text.substring(1);
@@ -314,6 +357,15 @@ public class CommandRegistry extends ListenerAdapter {
 		return text;
 	}
 	
+	/**
+	 * Return a Command if the String starts with one of it's aliases, or null
+	 * if a registered Command does have any aliases that match the start of String.
+	 * 
+	 * @param  text
+	 *         The String to find an alias at the start of.
+	 * @return The Command containing an alias that the String starts with.
+	 *         Returns null if no such Command exists.
+	 */
 	protected Command startsWithAlias(String text) {
 		for (Command command : commands) {
 			for (String alias : command.getAliases()) {
@@ -325,13 +377,29 @@ public class CommandRegistry extends ListenerAdapter {
 		return null;
 	}
 	
+	/**
+	 * Return a String that has the longest alias in the list of aliases removed
+	 * from the start of the String. Only removes the alias if the String and the
+	 * alias are the same length, or the alias is followed by a space. Returns
+	 * null if the String was not changed.
+	 * 
+	 * @param  text
+	 *         String to remove the alias from the start of.
+	 * @param  aliases
+	 *         List of Strings containing aliases to match and remove from the String.
+	 * @return The String with an alias from the List removed. If the String did
+	 *         not start with an alias in the List, returns null.
+	 */
 	protected String removeAlias(String text, List<String> aliases) {
 		String longestAlias = "";
 		for (String alias : aliases) {
 			if (text.startsWith(alias) && alias.length() > longestAlias.length()) {
 				// Enforce text to only be alias or a space to directly follow alias
-				if (text.length() == alias.length() || text.charAt(alias.length()) == ' ') {
-					// TODO Break when text.length == alias.length
+				if (text.length() == alias.length()) {
+					longestAlias = alias;
+					break;
+				}
+				else if (text.charAt(alias.length()) == ' ') {
 					longestAlias = alias;
 				}
 			}
@@ -342,6 +410,13 @@ public class CommandRegistry extends ListenerAdapter {
 		return null;
 	}
 	
+	/**
+	 * 
+	 * 
+	 * @param guild
+	 * @param messageBuilder
+	 * @return
+	 */
 	protected Command getAsOverrideCommand(Guild guild, StringBuilder messageBuilder) {
 		if (guildSettings == null) {
 			return null;
