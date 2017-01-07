@@ -36,6 +36,13 @@ public class LocalFiles implements CommandSettings, CommandSettingsGuild {
 	private LocalFiles(JDA jda, Path path) {
 		rootPath = path;
 		dataPath = path.resolve(DATA_DIRECTORY_NAME);
+		if (Files.notExists(dataPath)) {
+			try {
+				Files.createDirectory(dataPath);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public static LocalFiles getInstance(JDA jda) {
