@@ -1,6 +1,22 @@
 # TazbotDiscordLib using [JDA](https://github.com/DV8FromTheWorld/JDA)
 [![Build Status](https://travis-ci.org/Tazzie02/TazbotDiscordLib.svg?branch=master)](https://travis-ci.org/Tazzie02/TazbotDiscordLib)
 
+###Using with Gradle.
+build.gradle
+```
+repositories {
+    ...
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    ...
+    // Only use one of the following:
+    compile 'com.github.Tazzie02:TazbotDiscordLib:master-SNAPSHOT' // Latest master build
+    compile 'com.github.Tazzie02:TazbotDiscordLib:development-SNAPSHOT' // Latest development build
+}
+```
+
 ###Basic example using default implementers.
 ```java
 // Create the builder with the bot token
