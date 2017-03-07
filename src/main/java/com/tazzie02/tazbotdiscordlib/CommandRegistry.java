@@ -23,6 +23,7 @@ public class CommandRegistry extends ListenerAdapter {
 	private CommandSettingsGuild guildSettings;
 	private MessageReceivedLogger messageReceivedLogger;
 	private boolean caseSensitive = false;
+	private boolean ignoreMessagesFromSelf = true;
 	
 	public CommandRegistry() {
 		commands = new ArrayList<>();
@@ -46,6 +47,12 @@ public class CommandRegistry extends ListenerAdapter {
 	
 	public void setCaseSensitiveCommands(boolean caseSensitive) {
 		this.caseSensitive = caseSensitive;
+	}
+	
+	// Default to true
+	// If false, messages from self will show as messages received meaning messages could appear twice if sent is logged.
+	public void setIgnoreMessagesFromSelf(boolean ignoreMessagesFromSelf) {
+		this.ignoreMessagesFromSelf = ignoreMessagesFromSelf;
 	}
 	
 	public CommandRegistry registerCommand(Command command) {
@@ -97,7 +104,9 @@ public class CommandRegistry extends ListenerAdapter {
 	public void onMessageReceived(MessageReceivedEvent e) {
 		// Ignore messages from self
 		if (e.getAuthor().getId().equals(e.getJDA().getSelfUser().getId())) {
-			return;
+			if (ignoreMessagesFromSelf) {
+				return;
+			}
 		}
 		
 		logMessageReceived(e);
