@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.tazzie02.tazbotdiscordlib.MessageEditedLogger;
 import com.tazzie02.tazbotdiscordlib.MessageReceivedLogger;
 import com.tazzie02.tazbotdiscordlib.MessageSentLogger;
 import com.tazzie02.tazbotdiscordlib.filehandling.FileLogger;
@@ -17,16 +18,22 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
-public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogger {
+public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogger, MessageEditedLogger {
 	
 	private final boolean LOG_COMMANDS = true;
 	private final boolean CONSOLE_OUTPUT_COMMANDS = true;
 	private final boolean LOG_NON_COMMANDS = true;
 	private final boolean CONSOLE_OUTPUT_NON_COMMANDS = false;
+	
 	private final boolean LOG_SENT = true;
 	private final boolean CONSOLE_OUTPUT_SENT = true;
 	private final boolean LOG_SEND_FAILED = true;
 	private final boolean CONSOLE_OUTPUT_SEND_FAILED = true;
+	
+	private final boolean LOG_EDITED = true;
+	private final boolean CONSOLE_OUTPUT_EDITED = true;
+	private final boolean LOG_DELETED = true;
+	private final boolean CONSOLE_OUTPUT_DELETED = true;
 	
 	private final DateFormat dateTimeFormat;
 	
@@ -66,6 +73,16 @@ public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogg
 	@Override
 	public void messageSent(PrivateChannel c, Message message) {
 		logMessage(c, message, LOG_SENT, CONSOLE_OUTPUT_SENT);
+	}
+	
+	@Override
+	public void messageEdited(Message message, String oldContent) {
+		logEdited(message, oldContent, LOG_EDITED, CONSOLE_OUTPUT_EDITED);
+	}
+
+	@Override
+	public void messageDeleted(Message message) {
+		logDeleted(message, LOG_DELETED, CONSOLE_OUTPUT_DELETED);
 	}
 	
 	private void logMessage(MessageReceivedEvent e, boolean log, boolean printToConsole) {
@@ -147,6 +164,46 @@ public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogg
 			sendConsoleOutput(s);
 		}
 	}
+
+	private void logEdited(Message message, String oldContent, boolean log, boolean printToConsole) {
+		if (log) {
+			// HH:mm:ss [#CHANNEL][EDITED] Username: Message [OLD-CONTENT] Message
+			String s = String.format("[#%s][EDITED] %s: %s [OLD-CONTENT] %s", message.getChannel().getName(),
+					message.getAuthor().getName(), getSafeMessageContent(message), getSafeMessageContent(oldContent));
+			try {
+				FileLogger.log(s, message.getGuild(), message.getJDA());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		if (printToConsole) {
+			// yyyy-MM-dd HH:mm:ss.SSS [GUILD][#CHANNEL][EDITED] Username: Message [OLD-CONTENT] Message
+			String s = String.format("[%s][#%s][EDITED] %s: %s [OLD-CONTENT] %s", message.getGuild().getName(),
+					message.getChannel().getName(), message.getAuthor().getName(), getSafeMessageContent(message), getSafeMessageContent(oldContent));
+			sendConsoleOutput(s);
+		}
+	}
+	
+	private void logDeleted(Message message, boolean log, boolean printToConsole) {
+		if (log) {
+			// HH:mm:ss [#CHANNEL][DELETED] Username: Message
+			String s = String.format("[#%s][DELETED] %s: %s", message.getChannel().getName(),
+					message.getAuthor().getName(), getSafeMessageContent(message));
+			try {
+				FileLogger.log(s, message.getGuild(), message.getJDA());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		if (printToConsole) {
+			// yyyy-MM-dd HH:mm:ss.SSS [GUILD][#CHANNEL][DELETED] Username: Message
+			String s = String.format("[%s][#%s][DELETED] %s: %s", message.getGuild().getName(),
+					message.getChannel().getName(), message.getAuthor().getName(), getSafeMessageContent(message));
+			sendConsoleOutput(s);
+		}
+	}
 	
 	protected void sendConsoleOutput(String s) {
 		System.out.println(getDateTimeString() + " " + s);
@@ -158,7 +215,11 @@ public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogg
 	
 	protected String getSafeMessageContent(Message message) {
 		// TODO getContent doesn't seem to work, but rawContent will show mentions as <@1234567890>
-		return message.getRawContent().replaceAll("\n", " \\n ");
+		return getSafeMessageContent(message.getRawContent());
+	}
+	
+	protected String getSafeMessageContent(String message) {
+		return message.replaceAll("\n", " \\n ");
 	}
 
 }
