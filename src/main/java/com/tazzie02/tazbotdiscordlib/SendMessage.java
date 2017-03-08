@@ -16,12 +16,10 @@ public class SendMessage {
 	
 	private static Map<JDA, MessageSender> messageSenders = new HashMap<>();
 	
-	// TODO Should only be used by TazbotDiscordLibImpl
 	public static void addMessageSender(MessageSender messageSender, JDA jda) {
 		messageSenders.put(jda, messageSender);
 	}
 	
-	// TODO Should only be used by TazbotDiscordLibImpl
 	public static void removeMessageSender(JDA jda) {
 		messageSenders.remove(jda);
 	}
@@ -87,7 +85,7 @@ public class SendMessage {
 	public static void sendMessage(TextChannel c, Message message) {
 		MessageSender messageSender = messageSenders.get(c.getJDA());
 		if (messageSender == null) {
-			throw new NullPointerException("MessageSender is not set for this TazbotDiscordLib.");
+			throw new NullPointerException("MessageSender is not set for this JDA.");
 		}
 		messageSender.sendMessage(c, message);
 	}
@@ -95,7 +93,7 @@ public class SendMessage {
 	public static void sendMessage(TextChannel c, String message) {
 		MessageSender messageSender = messageSenders.get(c.getJDA());
 		if (messageSender == null) {
-			throw new NullPointerException("MessageSender is not set for this TazbotDiscordLib.");
+			throw new NullPointerException("MessageSender is not set for this JDA.");
 		}
 		messageSender.sendMessage(c, message);
 	}
@@ -129,7 +127,7 @@ public class SendMessage {
 	public static void sendPrivate(PrivateChannel c, Message message) {
 		MessageSender messageSender = messageSenders.get(c.getJDA());
 		if (messageSender == null) {
-			throw new NullPointerException("MessageSender is not set for this TazbotDiscordLib.");
+			throw new NullPointerException("MessageSender is not set for this JDA.");
 		}
 		messageSender.sendPrivate(c, message);
 	}
@@ -137,7 +135,7 @@ public class SendMessage {
 	public static void sendPrivate(PrivateChannel c, String message) {
 		MessageSender messageSender = messageSenders.get(c.getJDA());
 		if (messageSender == null) {
-			throw new NullPointerException("MessageSender is not set for this TazbotDiscordLib.");
+			throw new NullPointerException("MessageSender is not set for this JDA.");
 		}
 		messageSender.sendPrivate(c, message);
 	}
