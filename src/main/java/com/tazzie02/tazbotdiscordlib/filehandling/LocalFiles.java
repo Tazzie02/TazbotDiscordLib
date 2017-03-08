@@ -23,12 +23,15 @@ public class LocalFiles implements CommandSettings, CommandSettingsGuild {
 	
 	private final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	private static Map<JDA, LocalFiles> instances = new HashMap<>();
+	
 	private Path rootPath;
 	private Path dataPath;
 	private final String DATA_DIRECTORY_NAME = "data";
 	private final String LOG_DIRECTORY_NAME = "logs";
-	private Config config;
+	
 	private Map<Guild, CommandSettingsImpl> settings = new HashMap<>();;
+	
+	private Config config;
 	private final String CONFIG_FILE_NAME = "config.json";
 	private final String SETTINGS_FILE_NAME = "command-settings.json";
 	private final String DEFAULT_PREFIX = "!";
@@ -43,6 +46,8 @@ public class LocalFiles implements CommandSettings, CommandSettingsGuild {
 				e.printStackTrace();
 			}
 		}
+		
+		loadConfig();
 	}
 	
 	public static LocalFiles getInstance(JDA jda) {
@@ -71,7 +76,7 @@ public class LocalFiles implements CommandSettings, CommandSettingsGuild {
 	public boolean loadConfig() {
 		try {
 			Path file = getConfigFile();
-			if (!Files.exists(file)) {
+			if (Files.notExists(file)) {
 				saveConfig();
 			}
 			else {
