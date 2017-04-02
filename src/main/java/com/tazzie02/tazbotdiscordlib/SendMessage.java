@@ -34,7 +34,7 @@ public class SendMessage {
 			return;
 		}
 		else if (c instanceof PrivateChannel) {
-			sendMessage((PrivateChannel) c, message);
+			sendPrivate((PrivateChannel) c, message);
 			return;
 		}
 		
@@ -46,7 +46,7 @@ public class SendMessage {
 		
 		PrivateChannel pc = c.getJDA().getPrivateChannelById(c.getId());
 		if (pc != null) {
-			sendMessage(pc, message);
+			sendPrivate(pc, message);
 			return;
 		}
 		
@@ -63,7 +63,7 @@ public class SendMessage {
 			return;
 		}
 		else if (c instanceof PrivateChannel) {
-			sendMessage((PrivateChannel) c, message);
+			sendPrivate((PrivateChannel) c, message);
 			return;
 		}
 
@@ -75,7 +75,7 @@ public class SendMessage {
 		
 		PrivateChannel pc = c.getJDA().getPrivateChannelById(c.getId());
 		if (pc != null) {
-			sendMessage(pc, message);
+			sendPrivate(pc, message);
 			return;
 		}
 		
@@ -104,7 +104,7 @@ public class SendMessage {
 		}
 		
 		if (e.isFromType(ChannelType.PRIVATE)) {
-			sendMessage(e.getPrivateChannel(), message);
+			sendPrivate(e.getPrivateChannel(), message);
 		}
 		else {
 			sendMessage(e.getTextChannel(), message);
@@ -117,7 +117,7 @@ public class SendMessage {
 		}
 		
 		if (e.isFromType(ChannelType.PRIVATE)) {
-			sendMessage(e.getPrivateChannel(), message);
+			sendPrivate(e.getPrivateChannel(), message);
 		}
 		else {
 			sendMessage(e.getTextChannel(), message);
@@ -145,7 +145,7 @@ public class SendMessage {
 			throw new NullPointerException();
 		}
 		
-		sendMessage(u.getPrivateChannel(), message);
+		sendPrivate(u.getPrivateChannel(), message);
 	}
 	
 	public static void sendPrivate(User u, String message) {
@@ -153,7 +153,7 @@ public class SendMessage {
 			throw new NullPointerException();
 		}
 		
-		sendMessage(u.getPrivateChannel(), message);
+		sendPrivate(u.getPrivateChannel(), message);
 	}
 	
 	public static void sendPrivate(MessageReceivedEvent e, Message message) {
