@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import com.tazzie02.tazbotdiscordlib.CommandInformation.CommandAccess;
 
@@ -335,12 +336,12 @@ public class CommandRegistry extends ListenerAdapter {
 		CommandAccess access = command.getAccess();
 		
 		if (access.equals(CommandAccess.MODERATOR)) {
-			if (isModerator(user, guild) || isOwner(user, guild)) {
+			if (isModerator(user, guild) || isOwner(user)) {
 				return true;
 			}
 		}
 		else if (access.equals(CommandAccess.OWNER)) {
-			if (isOwner(user, guild)) {
+			if (isOwner(user)) {
 				return true;
 			}
 		}
@@ -374,15 +375,17 @@ public class CommandRegistry extends ListenerAdapter {
 		String id = user.getId();
 		
 		if (guildSettings != null) {
-			if (guildSettings.getModerators(guild) != null) {
-				if (guildSettings.getModerators(guild).contains(id)) {
+			Set<String> moderatorIds = guildSettings.getModerators(guild);
+			if (moderatorIds != null) {
+				if (moderatorIds.contains(id)) {
 					return true;
 				}
 			}
 		}
 		if (defaultSettings != null) {
-			if (defaultSettings.getModerators() != null) {
-				if (defaultSettings.getModerators().contains(id)) {
+			Set<String> moderatorIds = defaultSettings.getModerators();
+			if (moderatorIds != null) {
+				if (moderatorIds.contains(id)) {
 					return true;
 				}
 			}
@@ -392,10 +395,11 @@ public class CommandRegistry extends ListenerAdapter {
 	}
 	
 	// TODO Shouldn't be in CommandRegistry
-	public boolean isOwner(User user, Guild guild) {
+	public boolean isOwner(User user) {
 		if (owners != null) {
-			if (owners.getOwners() != null) {
-				if (owners.getOwners().contains(user.getId())) {
+			Set<String> ownerIds = owners.getOwners();
+			if (ownerIds != null) {
+				if (ownerIds.contains(user.getId())) {
 					return true;
 				}
 			}
