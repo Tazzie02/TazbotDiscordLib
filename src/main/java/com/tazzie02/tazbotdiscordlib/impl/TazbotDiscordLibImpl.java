@@ -30,7 +30,7 @@ public class TazbotDiscordLibImpl implements TazbotDiscordLib {
 		builder.setToken(botToken);
 		builder.setBulkDeleteSplittingEnabled(false);
 		builder.setAudioEnabled(audioEnabled);
-		listeners.forEach(builder::addListener);
+		listeners.forEach(builder::addEventListener);
 		
 		return builder.buildBlocking();
 	}
