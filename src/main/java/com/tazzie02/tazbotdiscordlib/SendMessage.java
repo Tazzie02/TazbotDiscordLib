@@ -145,7 +145,7 @@ public class SendMessage {
 			throw new NullPointerException();
 		}
 		
-		sendPrivate(u.getPrivateChannel(), message);
+		sendPrivate(u.openPrivateChannel().complete(), message);
 	}
 	
 	public static void sendPrivate(User u, String message) {
@@ -153,7 +153,7 @@ public class SendMessage {
 			throw new NullPointerException();
 		}
 		
-		sendPrivate(u.getPrivateChannel(), message);
+		sendPrivate(u.openPrivateChannel().complete(), message);
 	}
 	
 	public static void sendPrivate(MessageReceivedEvent e, Message message) {
@@ -166,7 +166,7 @@ public class SendMessage {
 			c = e.getPrivateChannel();
 		}
 		else {
-			c = e.getAuthor().getPrivateChannel();
+			c = e.getAuthor().openPrivateChannel().complete();
 		}
 		
 		sendPrivate(c, message);
@@ -182,7 +182,7 @@ public class SendMessage {
 			c = e.getPrivateChannel();
 		}
 		else {
-			c = e.getAuthor().getPrivateChannel();
+			c = e.getAuthor().openPrivateChannel().complete();
 		}
 		
 		sendPrivate(c, message);
