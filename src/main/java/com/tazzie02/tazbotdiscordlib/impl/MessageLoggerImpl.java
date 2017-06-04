@@ -18,27 +18,149 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
+// TODO Allow custom output messages
 public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogger, MessageEditedLogger {
 	
-	private final boolean LOG_COMMANDS = true;
-	private final boolean CONSOLE_OUTPUT_COMMANDS = true;
-	private final boolean LOG_NON_COMMANDS = true;
-	private final boolean CONSOLE_OUTPUT_NON_COMMANDS = false;
+	// Received messages
+	private boolean logCommands = true;
+	private boolean consoleOutputCommands = true;
+	private boolean logNonCommands = true;
+	private boolean consoleOutputNonCommands = false;
 	
-	private final boolean LOG_SENT = true;
-	private final boolean CONSOLE_OUTPUT_SENT = true;
-	private final boolean LOG_SEND_FAILED = true;
-	private final boolean CONSOLE_OUTPUT_SEND_FAILED = true;
+	// Sent messages
+	private boolean logSent = true;
+	private boolean consoleOutputSent = true;
+	private boolean logSendFailed = true;
+	private boolean consoleOutputSendFailed = true;
 	
-	private final boolean LOG_EDITED = true;
-	private final boolean CONSOLE_OUTPUT_EDITED = true;
-	private final boolean LOG_DELETED = true;
-	private final boolean CONSOLE_OUTPUT_DELETED = true;
+	// Changed messages
+	private boolean logEdited = true;
+	private boolean consoleOutputEdited = true;
+	private boolean logDeleted = true;
+	private boolean consoleOutputDeleted = true;
 	
 	private final DateFormat dateTimeFormat;
 	
 	{
 		dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+	}
+	
+	public void setAllLogging(boolean allLogging) {
+		logCommands = allLogging;
+		logNonCommands = allLogging;
+		logSent = allLogging;
+		logSendFailed = allLogging;
+		logEdited = allLogging;
+		logDeleted = allLogging;
+	}
+	
+	public void setAllConsoleOutput(boolean allConsoleOutput) {
+		consoleOutputCommands = allConsoleOutput;
+		consoleOutputNonCommands = allConsoleOutput;
+		consoleOutputSent = allConsoleOutput;
+		consoleOutputSendFailed = allConsoleOutput;
+		consoleOutputEdited = allConsoleOutput;
+		consoleOutputDeleted = allConsoleOutput;
+	}
+
+	public boolean isLogCommands() {
+		return logCommands;
+	}
+
+	public void setLogCommands(boolean logCommands) {
+		this.logCommands = logCommands;
+	}
+
+	public boolean isConsoleOutputCommands() {
+		return consoleOutputCommands;
+	}
+
+	public void setConsoleOutputCommands(boolean consoleOutputCommands) {
+		this.consoleOutputCommands = consoleOutputCommands;
+	}
+
+	public boolean isLogNonCommands() {
+		return logNonCommands;
+	}
+
+	public void setLogNonCommands(boolean logNonCommands) {
+		this.logNonCommands = logNonCommands;
+	}
+
+	public boolean isConsoleOutputNonCommands() {
+		return consoleOutputNonCommands;
+	}
+
+	public void setConsoleOutputNonCommands(boolean consoleOutputNonCommands) {
+		this.consoleOutputNonCommands = consoleOutputNonCommands;
+	}
+
+	public boolean isLogSent() {
+		return logSent;
+	}
+
+	public void setLogSent(boolean logSent) {
+		this.logSent = logSent;
+	}
+
+	public boolean isConsoleOutputSent() {
+		return consoleOutputSent;
+	}
+
+	public void setConsoleOutputSent(boolean consoleOutputSent) {
+		this.consoleOutputSent = consoleOutputSent;
+	}
+
+	public boolean isLogSendFailed() {
+		return logSendFailed;
+	}
+
+	public void setLogSendFailed(boolean logSendFailed) {
+		this.logSendFailed = logSendFailed;
+	}
+
+	public boolean isConsoleOutputSendFailed() {
+		return consoleOutputSendFailed;
+	}
+
+	public void setConsoleOutputSendFailed(boolean consoleOutputSendFailed) {
+		this.consoleOutputSendFailed = consoleOutputSendFailed;
+	}
+
+	public boolean isLogEdited() {
+		return logEdited;
+	}
+
+	public void setLogEdited(boolean logEdited) {
+		this.logEdited = logEdited;
+	}
+
+	public boolean isConsoleOutputEdited() {
+		return consoleOutputEdited;
+	}
+
+	public void setConsoleOutputEdited(boolean consoleOutputEdited) {
+		this.consoleOutputEdited = consoleOutputEdited;
+	}
+
+	public boolean isLogDeleted() {
+		return logDeleted;
+	}
+
+	public void setLogDeleted(boolean logDeleted) {
+		this.logDeleted = logDeleted;
+	}
+
+	public boolean isConsoleOutputDeleted() {
+		return consoleOutputDeleted;
+	}
+
+	public void setConsoleOutputDeleted(boolean consoleOutputDeleted) {
+		this.consoleOutputDeleted = consoleOutputDeleted;
+	}
+
+	public DateFormat getDateTimeFormat() {
+		return dateTimeFormat;
 	}
 
 	// Ignored because messageReceivedCommand and messageReceivedNotCommand cover this anyway
@@ -49,40 +171,40 @@ public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogg
 
 	@Override
 	public void messageReceivedCommand(MessageReceivedEvent e) {
-		logMessage(e, LOG_COMMANDS, CONSOLE_OUTPUT_COMMANDS);
+		logMessage(e, logCommands, consoleOutputCommands);
 	}
 
 	@Override
 	public void messageReceivedNotCommand(MessageReceivedEvent e) {
-		logMessage(e, LOG_NON_COMMANDS, CONSOLE_OUTPUT_NON_COMMANDS);
+		logMessage(e, logNonCommands, consoleOutputNonCommands);
 	}
 	
 	// Careful that Message will most likely have a null author
 	@Override
 	public void messageSent(TextChannel c, Message message) {
-		logMessage(c, message, LOG_SENT, CONSOLE_OUTPUT_SENT);
+		logMessage(c, message, logSent, consoleOutputSent);
 	}
 
 	// Careful that Message will most likely have a null author
 	@Override
 	public void messageSendFailed(TextChannel c, Message message, SendMessageFailed error) {
-		logMessage(c, message, error, LOG_SEND_FAILED, CONSOLE_OUTPUT_SEND_FAILED);
+		logMessage(c, message, error, logSendFailed, consoleOutputSendFailed);
 	}
 
 	// Careful that Message will most likely have a null author
 	@Override
 	public void messageSent(PrivateChannel c, Message message) {
-		logMessage(c, message, LOG_SENT, CONSOLE_OUTPUT_SENT);
+		logMessage(c, message, logSent, consoleOutputSent);
 	}
 	
 	@Override
 	public void messageEdited(Message message, String oldContent) {
-		logEdited(message, oldContent, LOG_EDITED, CONSOLE_OUTPUT_EDITED);
+		logEdited(message, oldContent, logEdited, consoleOutputEdited);
 	}
 
 	@Override
 	public void messageDeleted(Message message) {
-		logDeleted(message, LOG_DELETED, CONSOLE_OUTPUT_DELETED);
+		logDeleted(message, logDeleted, consoleOutputDeleted);
 	}
 	
 	private void logMessage(MessageReceivedEvent e, boolean log, boolean printToConsole) {
