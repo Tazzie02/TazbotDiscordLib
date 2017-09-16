@@ -12,7 +12,8 @@ public interface TazbotDiscordLib {
 	public TazbotDiscordLib removeListener(ListenerAdapter listener);
 	public TazbotDiscordLib setMessageSender(MessageSender messageSender);
 	public TazbotDiscordLib setFilePath(Path path);
-	public void shutdown(boolean free);
+	public void shutdown();
+	public void shutdownNow();
 	public boolean isShutdown();
 	
 }

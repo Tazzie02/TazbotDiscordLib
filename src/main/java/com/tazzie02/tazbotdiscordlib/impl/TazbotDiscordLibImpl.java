@@ -92,8 +92,14 @@ public class TazbotDiscordLibImpl implements TazbotDiscordLib {
 	}
 	
 	@Override
-	public void shutdown(boolean free) {
-		jda.shutdown(free);
+	public void shutdown() {
+		jda.shutdown();
+		shutdown = true;
+	}
+	
+	@Override
+	public void shutdownNow() {
+		jda.shutdownNow();
 		shutdown = true;
 	}
 	
