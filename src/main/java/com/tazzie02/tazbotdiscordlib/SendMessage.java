@@ -16,12 +16,10 @@ public class SendMessage {
 	
 	private static Map<JDA, MessageSender> messageSenders = new HashMap<>();
 	
-	// TODO Should only be used by TazbotDiscordLibImpl
 	public static void addMessageSender(MessageSender messageSender, JDA jda) {
 		messageSenders.put(jda, messageSender);
 	}
 	
-	// TODO Should only be used by TazbotDiscordLibImpl
 	public static void removeMessageSender(JDA jda) {
 		messageSenders.remove(jda);
 	}
@@ -36,7 +34,7 @@ public class SendMessage {
 			return;
 		}
 		else if (c instanceof PrivateChannel) {
-			sendMessage((PrivateChannel) c, message);
+			sendPrivate((PrivateChannel) c, message);
 			return;
 		}
 		
@@ -48,7 +46,7 @@ public class SendMessage {
 		
 		PrivateChannel pc = c.getJDA().getPrivateChannelById(c.getId());
 		if (pc != null) {
-			sendMessage(pc, message);
+			sendPrivate(pc, message);
 			return;
 		}
 		
@@ -65,7 +63,7 @@ public class SendMessage {
 			return;
 		}
 		else if (c instanceof PrivateChannel) {
-			sendMessage((PrivateChannel) c, message);
+			sendPrivate((PrivateChannel) c, message);
 			return;
 		}
 
@@ -77,7 +75,7 @@ public class SendMessage {
 		
 		PrivateChannel pc = c.getJDA().getPrivateChannelById(c.getId());
 		if (pc != null) {
-			sendMessage(pc, message);
+			sendPrivate(pc, message);
 			return;
 		}
 		
@@ -87,7 +85,7 @@ public class SendMessage {
 	public static void sendMessage(TextChannel c, Message message) {
 		MessageSender messageSender = messageSenders.get(c.getJDA());
 		if (messageSender == null) {
-			throw new NullPointerException("MessageSender is not set for this TazbotDiscordLib.");
+			throw new NullPointerException("MessageSender is not set for this JDA.");
 		}
 		messageSender.sendMessage(c, message);
 	}
@@ -95,7 +93,7 @@ public class SendMessage {
 	public static void sendMessage(TextChannel c, String message) {
 		MessageSender messageSender = messageSenders.get(c.getJDA());
 		if (messageSender == null) {
-			throw new NullPointerException("MessageSender is not set for this TazbotDiscordLib.");
+			throw new NullPointerException("MessageSender is not set for this JDA.");
 		}
 		messageSender.sendMessage(c, message);
 	}
@@ -106,7 +104,7 @@ public class SendMessage {
 		}
 		
 		if (e.isFromType(ChannelType.PRIVATE)) {
-			sendMessage(e.getPrivateChannel(), message);
+			sendPrivate(e.getPrivateChannel(), message);
 		}
 		else {
 			sendMessage(e.getTextChannel(), message);
@@ -119,7 +117,7 @@ public class SendMessage {
 		}
 		
 		if (e.isFromType(ChannelType.PRIVATE)) {
-			sendMessage(e.getPrivateChannel(), message);
+			sendPrivate(e.getPrivateChannel(), message);
 		}
 		else {
 			sendMessage(e.getTextChannel(), message);
@@ -129,7 +127,7 @@ public class SendMessage {
 	public static void sendPrivate(PrivateChannel c, Message message) {
 		MessageSender messageSender = messageSenders.get(c.getJDA());
 		if (messageSender == null) {
-			throw new NullPointerException("MessageSender is not set for this TazbotDiscordLib.");
+			throw new NullPointerException("MessageSender is not set for this JDA.");
 		}
 		messageSender.sendPrivate(c, message);
 	}
@@ -137,7 +135,7 @@ public class SendMessage {
 	public static void sendPrivate(PrivateChannel c, String message) {
 		MessageSender messageSender = messageSenders.get(c.getJDA());
 		if (messageSender == null) {
-			throw new NullPointerException("MessageSender is not set for this TazbotDiscordLib.");
+			throw new NullPointerException("MessageSender is not set for this JDA.");
 		}
 		messageSender.sendPrivate(c, message);
 	}
@@ -147,7 +145,7 @@ public class SendMessage {
 			throw new NullPointerException();
 		}
 		
-		sendMessage(u.getPrivateChannel(), message);
+		sendPrivate(u.openPrivateChannel().complete(), message);
 	}
 	
 	public static void sendPrivate(User u, String message) {
@@ -155,7 +153,7 @@ public class SendMessage {
 			throw new NullPointerException();
 		}
 		
-		sendMessage(u.getPrivateChannel(), message);
+		sendPrivate(u.openPrivateChannel().complete(), message);
 	}
 	
 	public static void sendPrivate(MessageReceivedEvent e, Message message) {
@@ -168,7 +166,7 @@ public class SendMessage {
 			c = e.getPrivateChannel();
 		}
 		else {
-			c = e.getAuthor().getPrivateChannel();
+			c = e.getAuthor().openPrivateChannel().complete();
 		}
 		
 		sendPrivate(c, message);
@@ -184,7 +182,7 @@ public class SendMessage {
 			c = e.getPrivateChannel();
 		}
 		else {
-			c = e.getAuthor().getPrivateChannel();
+			c = e.getAuthor().openPrivateChannel().complete();
 		}
 		
 		sendPrivate(c, message);

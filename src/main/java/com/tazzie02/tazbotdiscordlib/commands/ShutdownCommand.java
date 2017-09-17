@@ -18,7 +18,7 @@ public class ShutdownCommand implements Command {
 		} catch (InterruptedException ex) {
 			ex.printStackTrace();
 		}
-		e.getJDA().shutdown(true);
+		e.getJDA().shutdownNow();
 //		System.exit(0);
 	}
 

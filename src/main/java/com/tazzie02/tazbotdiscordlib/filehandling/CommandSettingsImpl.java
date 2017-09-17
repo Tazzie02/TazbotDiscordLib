@@ -34,6 +34,15 @@ public class CommandSettingsImpl implements CommandSettings {
 	public boolean removeModerator(String id) {
 		return moderators.remove(id);
 	}
+	
+	public void setModerators(Set<String> moderators) {
+		if (moderators == null) {
+			this.moderators = new HashSet<>();
+		}
+		else {
+			this.moderators = moderators;
+		}
+	}
 
 	@Override
 	public Set<String> getModerators() {
@@ -46,6 +55,15 @@ public class CommandSettingsImpl implements CommandSettings {
 	
 	public boolean removeCommandOverride(Command command) {
 		return commandOverrides.removeOverride(command);
+	}
+	
+	public void setCommandOverrides(CommandOverridesImpl commandOverrides) {
+		if (commandOverrides == null) {
+			this.commandOverrides = new CommandOverridesImpl();
+		}
+		else {
+			this.commandOverrides = commandOverrides;
+		}
 	}
 
 	@Override

@@ -3,8 +3,6 @@ package com.tazzie02.tazbotdiscordlib.commands;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.tazzie02.tazbotdiscordlib.Command;
 import com.tazzie02.tazbotdiscordlib.CommandInformation;
 import com.tazzie02.tazbotdiscordlib.CommandRegistry;
@@ -59,7 +57,7 @@ public class HelpCommand implements Command {
 			String s = "**" + c.getAliases().get(0) + "** - " + description;
 			
 			if (c.isHidden()) {
-				if (commandRegistry.isOwner(author, guild)) {
+				if (commandRegistry.isOwner(author)) {
 					s += " *(hidden)*";
 				}
 				else {
@@ -72,13 +70,13 @@ public class HelpCommand implements Command {
 			CommandAccess access = c.getAccess();
 			if (access.equals(CommandAccess.MODERATOR)) {
 				// If moderator or owner
-				if (commandRegistry.isModerator(author, guild) || commandRegistry.isOwner(author, guild)) {
+				if (commandRegistry.isModerator(author, guild) || commandRegistry.isOwner(author)) {
 					mod.append(s);
 				}
 			}
 			else if (access.equals(CommandAccess.OWNER)) {
 				// If developer
-				if (commandRegistry.isOwner(author, guild)) {
+				if (commandRegistry.isOwner(author)) {
 					owner.append(s);
 				}
 			}
@@ -123,7 +121,7 @@ public class HelpCommand implements Command {
 			return;
 		}
 		// If owner command AND user is not owner
-		else if (access.equals(CommandAccess.OWNER) && !commandRegistry.isOwner(author, guild)) {
+		else if (access.equals(CommandAccess.OWNER) && !commandRegistry.isOwner(author)) {
 			return;
 		}
 		
@@ -142,7 +140,7 @@ public class HelpCommand implements Command {
 		
 		SendMessage.sendPrivate(e, "**Name:** " + name + "\n"
 				+ "**Description:** " + description + "\n"
-				+ "**Aliases:** " + StringUtils.join(command.getAliases(), ", ") + "\n"
+				+ "**Aliases:** " + String.join(", ", command.getAliases()) + "\n" 
 				+ "**Details:** " + details);
 	}
 	
