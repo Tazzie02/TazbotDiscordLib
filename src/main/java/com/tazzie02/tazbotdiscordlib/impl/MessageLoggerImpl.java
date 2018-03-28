@@ -337,7 +337,7 @@ public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogg
 	
 	protected String getSafeMessageContent(Message message) {
 		// TODO getContent doesn't seem to work, but rawContent will show mentions as <@1234567890>
-		return getSafeMessageContent(message.getRawContent());
+		return getSafeMessageContent(message.getContentRaw());
 	}
 	
 	protected String getSafeMessageContent(String message) {

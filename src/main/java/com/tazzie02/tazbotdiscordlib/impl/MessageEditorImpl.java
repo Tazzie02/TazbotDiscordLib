@@ -34,7 +34,7 @@ public class MessageEditorImpl implements MessageEditor {
 	
 	@Override
 	public Message editMessageSync(Message message, String content) {
-		String oldContent = message.getRawContent();
+		String oldContent = message.getContentRaw();
 		Message newMessage;
 		
 		try {
@@ -50,7 +50,7 @@ public class MessageEditorImpl implements MessageEditor {
 	
 	@Override
 	public void editMessageAsync(Message message, String content) {
-		String oldContent = message.getRawContent();
+		String oldContent = message.getContentRaw();
 		
 		try {
 			editMessage(message, content).queue(m -> 

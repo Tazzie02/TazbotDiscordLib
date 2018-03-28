@@ -1,5 +1,8 @@
+apply plugin: 'java-library'
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.plugin-shadow'
 
 def versionObj = new Version(major: 0, minor: 1, revision: 0)
 version = "$versionObj"
@@ -7,30 +10,20 @@ version = "$versionObj"
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.2'
+    }
+}
+
 jar {
     baseName = project.name
     manifest {
         attributes 'Implementation-Version': version
     }
-}
-
-//create a single Jar with all dependencies
-task fatJar(type: Jar) {
-    manifest {
-        attributes 'Implementation-Version': version
-    }
-    baseName = project.name + '-withDependencies'
-    from { 
-        configurations.compile.collect {
-            dependency ->
-            if (dependency.directory) { // If it is a folder, just include the folder in its entirety
-                return dependency
-            } else {    // If it isn't a folder, put it in a zipTree. if it is a zip or jar the contents will be extracted.
-                return zipTree(dependency)
-            }
-        }
-    }
-    with jar
 }
 
 repositories {
@@ -41,11 +34,10 @@ dependencies {
     // The production code uses the SLF4J logging API at compile time
     //compile 'org.slf4j:slf4j-api:1.7.12'
 
-	compile 'net.dv8tion:JDA:3.3.0_271'
-	compile 'com.google.code.gson:gson:2.7'
+	implementation 'net.dv8tion:JDA:3.5.1_345'
+	implementation 'com.google.code.gson:gson:2.7'
 	
-
-    testCompile 'junit:junit:4.12'
+    //testCompile 'junit:junit:4.12'
 }
 
 class Version {
@@ -59,6 +51,3 @@ class Version {
         "${major}.${minor}.${revision}_$build"
     }
 }
-
-//Creates the w/ dependencies jar.
-assemble.dependsOn fatJar

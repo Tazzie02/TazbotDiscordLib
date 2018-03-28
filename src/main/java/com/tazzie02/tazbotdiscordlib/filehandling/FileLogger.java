@@ -11,6 +11,7 @@ import java.util.TimeZone;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
 
+// TODO Change to singleton
 public class FileLogger {
 	
 	private final static String NAME_FORMAT = "yyyyMMdd";
@@ -19,7 +20,7 @@ public class FileLogger {
 	private final static String TIME_FORMAT = "HH:mm:ss.SSS";
 	private final static SimpleDateFormat timeFormat = new SimpleDateFormat(TIME_FORMAT);
 	
-	{
+	static {
 		dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 		timeFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 	}

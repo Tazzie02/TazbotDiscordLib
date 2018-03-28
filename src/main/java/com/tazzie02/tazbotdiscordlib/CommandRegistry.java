@@ -112,7 +112,7 @@ public class CommandRegistry extends ListenerAdapter {
 		
 		logMessageReceived(e);
 		
-		String message = e.getMessage().getRawContent();
+		String message = e.getMessage().getContentRaw();
 		
 		if (ALLOW_MENTION_PREFIX) {
 			// If first argument is mention
