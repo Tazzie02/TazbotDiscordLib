@@ -320,11 +320,10 @@ public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogg
 	private User getAuthor(Message message, JDA jda) {
 		// Could change to if (message instanceof DataMessage) instead of expect exception?
 		if (message instanceof DataMessage) {
-			return message.getAuthor();
+			return jda.getSelfUser();
 		}
 		else {
-			return jda.getSelfUser();
-			
+			return message.getAuthor();
 		}
 	}
 	
