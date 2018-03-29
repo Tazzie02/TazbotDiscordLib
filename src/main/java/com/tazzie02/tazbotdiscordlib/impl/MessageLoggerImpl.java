@@ -318,7 +318,6 @@ public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogg
 	}
 	
 	private User getAuthor(Message message, JDA jda) {
-		// Could change to if (message instanceof DataMessage) instead of expect exception?
 		if (message instanceof DataMessage) {
 			return jda.getSelfUser();
 		}
@@ -336,8 +335,14 @@ public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogg
 	}
 	
 	protected String getSafeMessageContent(Message message) {
-		// TODO getContent doesn't seem to work, but rawContent will show mentions as <@1234567890>
-		return getSafeMessageContent(message.getContentRaw());
+		if (!message.getEmbeds().isEmpty()) {
+			// TODO Only looks for the first embed
+			return "<embed> " + getSafeMessageContent(message.getEmbeds().get(0).getTitle());
+		}
+		else {
+			// TODO getContent doesn't seem to work, but rawContent will show mentions as <@1234567890>
+			return getSafeMessageContent(message.getContentRaw());
+		}
 	}
 	
 	protected String getSafeMessageContent(String message) {
