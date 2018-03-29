@@ -317,10 +317,11 @@ public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogg
 	}
 	
 	private User getAuthor(Message message) {
-		if (message.getType().equals(MessageType.DEFAULT)) {
+		// Could change to if (message instanceof DataMessage) instead of expect exception?
+		try {
 			return message.getAuthor();
 		}
-		else {
+		catch (UnsupportedOperationException e) {
 			return message.getJDA().getSelfUser();
 		}
 	}
