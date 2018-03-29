@@ -13,6 +13,7 @@ import com.tazzie02.tazbotdiscordlib.impl.MessageSenderImpl.SendMessageFailed;
 
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.MessageType;
 import net.dv8tion.jda.core.entities.PrivateChannel;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
@@ -179,19 +180,16 @@ public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogg
 		logMessage(e, logNonCommands, consoleOutputNonCommands);
 	}
 	
-	// Careful that Message will most likely have a null author
 	@Override
 	public void messageSent(TextChannel c, Message message) {
 		logMessage(c, message, logSent, consoleOutputSent);
 	}
 
-	// Careful that Message will most likely have a null author
 	@Override
 	public void messageSendFailed(TextChannel c, Message message, SendMessageFailed error) {
 		logMessage(c, message, error, logSendFailed, consoleOutputSendFailed);
 	}
 
-	// Careful that Message will most likely have a null author
 	@Override
 	public void messageSent(PrivateChannel c, Message message) {
 		logMessage(c, message, logSent, consoleOutputSent);
@@ -217,10 +215,7 @@ public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogg
 	}
 	
 	private void logMessage(TextChannel c, Message message, boolean log, boolean printToConsole) {
-		User author = message.getAuthor();
-		if (author == null) {
-			author = c.getJDA().getSelfUser();
-		}
+		User author = getAuthor(message);
 		
 		if (log) {
 			// HH:mm:ss [#CHANNEL] Username: Message
@@ -241,10 +236,7 @@ public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogg
 	}
 	
 	private void logMessage(TextChannel c, Message message, SendMessageFailed error, boolean log, boolean printToConsole) {
-		User author = message.getAuthor();
-		if (author == null) {
-			author = c.getJDA().getSelfUser();
-		}
+		User author = getAuthor(message);
 		
 		if (log) {
 			// HH:mm:ss FAILED_REASON [#CHANNEL] Username: Message
@@ -265,10 +257,7 @@ public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogg
 	}
 	
 	private void logMessage(PrivateChannel c, Message message, boolean log, boolean printToConsole) {
-		User author = message.getAuthor();
-		if (author == null) {
-			author = c.getJDA().getSelfUser();
-		}
+		User author = getAuthor(message);
 		
 		if (log) {
 			// HH:mm:ss Username: Message
@@ -324,6 +313,15 @@ public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogg
 			String s = String.format("[%s][#%s][DELETED] %s: %s", message.getGuild().getName(),
 					message.getChannel().getName(), message.getAuthor().getName(), getSafeMessageContent(message));
 			sendConsoleOutput(s);
+		}
+	}
+	
+	private User getAuthor(Message message) {
+		if (message.getType().equals(MessageType.DEFAULT)) {
+			return message.getAuthor();
+		}
+		else {
+			return message.getJDA().getSelfUser();
 		}
 	}
 	
