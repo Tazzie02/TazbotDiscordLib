@@ -335,14 +335,8 @@ public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogg
 	}
 	
 	protected String getSafeMessageContent(Message message) {
-		if (!message.getEmbeds().isEmpty()) {
-			// TODO Only looks for the first embed
-			return "<embed> " + getSafeMessageContent(message.getEmbeds().get(0).getTitle());
-		}
-		else {
-			// TODO getContent doesn't seem to work, but rawContent will show mentions as <@1234567890>
-			return getSafeMessageContent(message.getContentRaw());
-		}
+		// TODO getContent doesn't seem to work, but rawContent will show mentions as <@1234567890>
+		return getSafeMessageContent(message.getContentRaw());
 	}
 	
 	protected String getSafeMessageContent(String message) {
