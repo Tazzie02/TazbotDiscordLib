@@ -11,12 +11,13 @@ import com.tazzie02.tazbotdiscordlib.MessageSentLogger;
 import com.tazzie02.tazbotdiscordlib.filehandling.FileLogger;
 import com.tazzie02.tazbotdiscordlib.impl.MessageSenderImpl.SendMessageFailed;
 
+import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageType;
 import net.dv8tion.jda.core.entities.PrivateChannel;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.impl.DataMessage;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 // TODO Allow custom output messages
@@ -215,7 +216,7 @@ public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogg
 	}
 	
 	private void logMessage(TextChannel c, Message message, boolean log, boolean printToConsole) {
-		User author = getAuthor(message);
+		User author = getAuthor(message, c.getJDA());
 		
 		if (log) {
 			// HH:mm:ss [#CHANNEL] Username: Message
@@ -236,7 +237,7 @@ public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogg
 	}
 	
 	private void logMessage(TextChannel c, Message message, SendMessageFailed error, boolean log, boolean printToConsole) {
-		User author = getAuthor(message);
+		User author = getAuthor(message, c.getJDA());
 		
 		if (log) {
 			// HH:mm:ss FAILED_REASON [#CHANNEL] Username: Message
@@ -257,7 +258,7 @@ public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogg
 	}
 	
 	private void logMessage(PrivateChannel c, Message message, boolean log, boolean printToConsole) {
-		User author = getAuthor(message);
+		User author = getAuthor(message, c.getJDA());
 		
 		if (log) {
 			// HH:mm:ss Username: Message
@@ -316,13 +317,14 @@ public class MessageLoggerImpl implements MessageReceivedLogger, MessageSentLogg
 		}
 	}
 	
-	private User getAuthor(Message message) {
+	private User getAuthor(Message message, JDA jda) {
 		// Could change to if (message instanceof DataMessage) instead of expect exception?
-		try {
+		if (message instanceof DataMessage) {
 			return message.getAuthor();
 		}
-		catch (UnsupportedOperationException e) {
-			return message.getJDA().getSelfUser();
+		else {
+			return jda.getSelfUser();
+			
 		}
 	}
 	
