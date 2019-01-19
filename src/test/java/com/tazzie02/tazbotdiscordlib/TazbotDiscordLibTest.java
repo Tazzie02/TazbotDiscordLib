@@ -1,12 +1,13 @@
 package com.tazzie02.tazbotdiscordlib;
 
-import net.dv8tion.jda.core.JDA;
+import com.tazzie02.tazbotdiscordlib.impl.MessageSenderImpl;
+import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import javax.security.auth.login.LoginException;
+
+import java.time.Instant;
 
 import static org.junit.Assert.*;
 
@@ -14,17 +15,18 @@ public class TazbotDiscordLibTest {
 
     private static final String BOT_TOKEN;
 
-    private TazbotDiscordLib tdl;
+    private static TazbotDiscordLib tdl;
 
     static {
-        BOT_TOKEN = System.getProperty("BotToken");
+        BOT_TOKEN = System.getProperty("BOT_TOKEN");
     }
 
-    @Before
-    public void login() {
+    @BeforeClass
+    public static void login() {
         TazbotDiscordLibBuilder builder = new TazbotDiscordLibBuilder(BOT_TOKEN);
         try {
-            this.tdl = builder.build();
+            builder.setMessageSender(new MessageSenderImpl());
+            tdl = builder.build();
         } catch (LoginException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -34,8 +36,8 @@ public class TazbotDiscordLibTest {
         }
     }
 
-    @After
-    public void logout() {
+    @AfterClass
+    public static void logout() {
         if (tdl != null) {
             tdl.shutdown();
             tdl = null;
@@ -45,6 +47,13 @@ public class TazbotDiscordLibTest {
     @Test
     public void tazbotDiscordLibTest() {
         assertNotNull(tdl.getJDA());
+    }
+
+    @Test
+    public void botNameTest() {
+        String name = tdl.getJDA().getSelfUser().getName();
+        System.out.println(name);
+        assertNotNull(name);
     }
 
 }

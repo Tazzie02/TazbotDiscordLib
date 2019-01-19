@@ -3,6 +3,7 @@ package com.tazzie02.tazbotdiscordlib.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.tazzie02.tazbotdiscordlib.MessageCallback;
 import com.tazzie02.tazbotdiscordlib.MessageSender;
 import com.tazzie02.tazbotdiscordlib.MessageSentLogger;
 
@@ -21,7 +22,7 @@ public class MessageSenderImpl implements MessageSender {
 	private MessageSentLogger messageSentLogger;
 
 	@Override
-	public void sendMessage(TextChannel c, Message message) {
+	public void sendMessage(TextChannel c, Message message, MessageCallback callback) {
 		if (c == null || message == null) {
 			throw new NullPointerException();
 		}
@@ -38,6 +39,9 @@ public class MessageSenderImpl implements MessageSender {
 		try {
 			c.sendMessage(message).queue(m -> {
 				logMessageSent(c, message);
+				if (callback != null) {
+					callback.callback(m);
+				}
 			});
 		}
 		catch (VerificationLevelException e) {
@@ -46,7 +50,7 @@ public class MessageSenderImpl implements MessageSender {
 	}
 
 	@Override
-	public void sendMessage(TextChannel c, String message) {
+	public void sendMessage(TextChannel c, String message, MessageCallback callback) {
 		if (c == null || message == null || message.isEmpty()) {
 			throw new NullPointerException();
 		}
@@ -59,23 +63,26 @@ public class MessageSenderImpl implements MessageSender {
 		}
 		
 		for (int i = 0; i < n; i++) {
-			sendMessage(c, messages.get(i));
+			sendMessage(c, messages.get(i), callback);
 		}
 	}
 
 	@Override
-	public void sendPrivate(PrivateChannel c, Message message) {
+	public void sendPrivate(PrivateChannel c, Message message, MessageCallback callback) {
 		if (c == null || message == null) {
 			throw new NullPointerException();
 		}
-		
+
 		c.sendMessage(message).queue(m -> {
 			logMessageSent(c, message);
+			if (callback != null) {
+				callback.callback(m);
+			}
 		});
 	}
 
 	@Override
-	public void sendPrivate(PrivateChannel c, String message) {
+	public void sendPrivate(PrivateChannel c, String message, MessageCallback callback) {
 		if (c == null || message == null || message.isEmpty()) {
 			throw new NullPointerException();
 		}
@@ -88,7 +95,7 @@ public class MessageSenderImpl implements MessageSender {
 		}
 		
 		for (int i = 0; i < n; i++) {
-			sendPrivate(c, messages.get(i));
+			sendPrivate(c, messages.get(i), callback);
 		}
 		
 	}
